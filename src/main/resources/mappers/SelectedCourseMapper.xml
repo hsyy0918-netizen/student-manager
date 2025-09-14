@@ -13,19 +13,19 @@
         where student_id = #{studentId} and course_id = #{courseId}
     </delete>
 
-    <select id="selectStudentSelectedCourses" resultType="com.jxd.stuManger.model.SelectedCourse">
+    <select id="selectStudentSelectedCourses" resultType="cWithSCourse">
         select course_id as courseId, student_id as studentId, mark
         from selectedcourse
         where student_id = #{studentId}
     </select>
 
-    <select id="selectStudentFinishedCourses" resultType="com.jxd.stuManger.model.SelectedCourse">
+    <select id="selectStudentFinishedCourses" resultType="cWithSCourse">
         select course_id as courseId, student_id as studentId, mark
         from selectedcourse
         where student_id = #{studentId} and mark is not null
     </select>
 
-    <select id="selectStudentsByCourseId" resultType="com.jxd.stuManger.model.SelectedCourse">
+    <select id="selectStudentsByCourseId" resultType="sWithSCourse">
         select course_id as courseId, student_id as studentId, mark
         from selectedcourse
         where course_id = #{courseId}

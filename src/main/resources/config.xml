@@ -12,7 +12,10 @@
         </settings>
 
     <typeAliases>
+        <typeAlias type="com.jxd.stuManger.vo.CourseWithSCourse" alias="cWithSCourse"/>
+        <typeAlias type="com.jxd.stuManger.vo.StuWithSCourse" alias="sWithSCourse"/>
         <package name="com.jxd.stuManger.model"/>
+
     </typeAliases>
 
     <environments default="development">

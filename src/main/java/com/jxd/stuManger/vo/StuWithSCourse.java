@@ -1,5 +1,7 @@
 package com.jxd.stuManger.vo;
 
+import com.jxd.stuManger.model.SelectedCourse;
+
 /**
  * @author 何硕
  * @version 1.0
@@ -8,20 +10,17 @@ package com.jxd.stuManger.vo;
  * @date 2025/9/14 21:49
  */
 public class StuWithSCourse {
-    private int courseId;
     private int studentId;
-    private Integer mark;
     private String studentName;
-    private String courseName;
-    private String teacherName;
-    private int score;
+    private SelectedCourse selectedCourse;
 
-    public int getCourseId() {
-        return courseId;
+    public StuWithSCourse(int studentId, String studentName, SelectedCourse selectedCourse) {
+        this.studentId = studentId;
+        this.studentName = studentName;
+        this.selectedCourse = selectedCourse;
     }
 
-    public void setCourseId(int courseId) {
-        this.courseId = courseId;
+    public StuWithSCourse() {
     }
 
     public int getStudentId() {
@@ -32,14 +31,6 @@ public class StuWithSCourse {
         this.studentId = studentId;
     }
 
-    public Integer getMark() {
-        return mark;
-    }
-
-    public void setMark(Integer mark) {
-        this.mark = mark;
-    }
-
     public String getStudentName() {
         return studentName;
     }
@@ -48,27 +39,11 @@ public class StuWithSCourse {
         this.studentName = studentName;
     }
 
-    public String getCourseName() {
-        return courseName;
+    public SelectedCourse getSelectedCourse() {
+        return selectedCourse;
     }
 
-    public void setCourseName(String courseName) {
-        this.courseName = courseName;
-    }
-
-    public String getTeacherName() {
-        return teacherName;
-    }
-
-    public void setTeacherName(String teacherName) {
-        this.teacherName = teacherName;
-    }
-
-    public int getScore() {
-        return score;
-    }
-
-    public void setScore(int score) {
-        this.score = score;
+    public void setSelectedCourse(SelectedCourse selectedCourse) {
+        this.selectedCourse = selectedCourse;
     }
 }

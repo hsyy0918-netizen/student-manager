@@ -1,56 +1,47 @@
 package com.jxd.stuManger.servlet;
 
-import com.jxd.stuManger.model.UserLogin;
+import com.jxd.stuManger.model.*;
+import com.jxd.stuManger.service.*;
+import com.jxd.stuManger.service.impl.LoginServiceImpl;
+
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
-/**
- * @author 何硕
- * @version 1.0
- * @className LoginServlet
- * @description TODO
- * @date 2025/9/10 23:35
- */
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
-    @Override
+    private ILoginService loginService = new LoginServiceImpl();
+
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String userName = req.getParameter("userName");
+        req.setCharacterEncoding("UTF-8");
+        String username = req.getParameter("username");
         String password = req.getParameter("password");
 
-        int role =0;//之后获取
-        HttpSession session = req.getSession();
-        session.setAttribute("role",role);
+        UserLogin user = loginService.login(username, password);
 
-        //转发到index.jsp ,role在jsp里校验
-        //role = 0,返回error
+        if (user != null) {
+            req.getSession().setAttribute("currentUser", user);
+            req.getSession().setAttribute("username", user.getUserName());
 
-
-
-        switch (role){
-            case 1:
-                req.getRequestDispatcher("/admin").forward(req,resp);
-                break;
-            case 2:
-                req.getRequestDispatcher("/teacher").forward(req,resp);
-                break;
-            case 3:
-                req.getRequestDispatcher("/student").forward(req,resp);
-                break;
-            default:
-                session.setAttribute("error","用户名或者密码错误");
-                req.getRequestDispatcher("/login").forward(req,resp);
+            // 根据角色重定向到不同主页
+            if (user.getRole() == 1) { // 管理员
+                resp.sendRedirect(req.getContextPath() + "/admin/admin_main.jsp");
+            } else if (user.getRole() == 2) { // 教师
+                resp.sendRedirect(req.getContextPath() + "/teacher/teacher_main.jsp");
+            } else if (user.getRole() == 3) { // 学生
+                resp.sendRedirect(req.getContextPath() + "/student/student_main.jsp");
+            }
+        } else {
+            req.setAttribute("error", "用户名或密码错误！");
+            req.getRequestDispatcher("/login.jsp").forward(req, resp);
         }
     }
 
-    @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        doPost(req,resp);
+        this.doPost(req, resp);
     }
 }

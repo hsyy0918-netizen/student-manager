@@ -42,7 +42,7 @@
                         <dl class="layui-nav-child">
                             <dd><a href="${pageContext.request.contextPath}/student?action=getAllCourseForStu"
                                    target="mainFrame">所有课程</a></dd>
-                            <dd><a href="${pageContext.request.contextPath}/student?action=getSelectedCourse  "
+                            <dd><a href="${pageContext.request.contextPath}/student?action=getSelectedCourse"
                                    target="mainFrame">已选课程</a></dd>
                         </dl>
                     </c:if>
