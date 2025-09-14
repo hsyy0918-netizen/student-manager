@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxd.stuManger.dao.ISelectedCourseDao">
+
+    <insert id="insertSelectedCourse">
+        insert into selectedcourse (student_id, course_id)
+        values (#{studentId}, #{courseId})
+    </insert>
+
+    <delete id="deleteSelectedCourse">
+        delete from selectedcourse
+        where student_id = #{studentId} and course_id = #{courseId}
+    </delete>
+
+    <select id="selectStudentSelectedCourses" resultType="com.jxd.stuManger.model.SelectedCourse">
+        select course_id as courseId, student_id as studentId, mark
+        from selectedcourse
+        where student_id = #{studentId}
+    </select>
+
+    <select id="selectStudentFinishedCourses" resultType="com.jxd.stuManger.model.SelectedCourse">
+        select course_id as courseId, student_id as studentId, mark
+        from selectedcourse
+        where student_id = #{studentId} and mark is not null
+    </select>
+
+    <select id="selectStudentsByCourseId" resultType="com.jxd.stuManger.model.SelectedCourse">
+        select course_id as courseId, student_id as studentId, mark
+        from selectedcourse
+        where course_id = #{courseId}
+    </select>
+
+    <update id="updateMark">
+        update selectedcourse
+        set mark = #{mark}
+        where student_id = #{studentId} and course_id = #{courseId}
+    </update>
+
+    <select id="isCourseSelected" resultType="java.lang.Boolean">
+        select exists(
+            select 1 from selectedcourse
+            where student_id = #{studentId} and course_id = #{courseId}
+        )
+    </select>
+
+
+    <select id="isMarked" resultType="java.lang.Boolean">
+        select exists(
+            select 1 from selectedcourse
+            where student_id = #{studentId} and course_id = #{courseId} and mark is not null
+        )
+    </select>
+
+</mapper>

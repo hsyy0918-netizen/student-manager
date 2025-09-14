@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jxd.stuManger.dao.IStudentDao">
+    <sql id="baseCol">
+        student_id ,student_name, sex, birthday, grade, college_id
+    </sql>
+    <!--    id取值为dao层抽象方法的名字-->
+    <!--    resultType指的是查询出的每条数据封装为的类型,同时也对应dao层方法返回值-->
+    <!--    查询字段尽量和实体类的属性名一致  -->
+<!--    学生管理-->
+    <insert id="insertStudent" parameterType="student">
+        insert into student (student_name, sex, birthday, grade, college_id)
+            values (#{studentName},#{sex},#{birthday},#{grade},#{collegeId})
+    </insert>
+
+    <delete id="delStudent" >
+        delete from student where student_id = #{studentId}
+    </delete>
+
+    <update id="updateStudent" parameterType="student">
+        update student set student_name = #{studentName},
+                           sex = #{sex},
+                           birthday = #{birthday},
+                           grade = #{grade},
+                           college_id = #{collegeId}
+        where student_id = #{studentId}
+    </update>
+
+    <select id="selectAllStudent" resultType="student">
+        select student_id, student_name, sex, birthday, grade, college_id from student
+    </select>
+
+    <select id="selectStudentById" resultType="student">
+        select <include refid="baseCol"></include> from student
+        where student_id = #{studentId}
+    </select>
+
+    <select id="selectStudentByName" resultType="student">
+        select <include refid="baseCol"></include> from student
+        where student_name = #{studentName}
+    </select>
+
+</mapper>

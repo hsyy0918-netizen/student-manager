@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxd.stuManger.dao.ITeacherDao">
+    <sql id="BaseCol">
+        teacher_id,teacher_name,sex,birthday,degree,title,hire_date,college_id
+    </sql>
+
+    <insert id="insertTeacher" parameterType="teacher">
+        insert into teacher (teacher_id, teacher_name, sex, birthday, degree, title, hire_date, college_id)
+        values (#{teacherId},#{teacherName},#{sex},#{birthday},#{degree},#{title},#{hireDate},#{collegeId})
+    </insert>
+
+    <update id="updateTeacher" parameterType="teacher">
+        update teacher set teacher_id = #{teacherId},teacher_name = #{teacherName},sex =#{sex},
+                           birthday = #{birthday},degree = #{degree},title=#{title},hire_date = #{hireDate},
+                           college_id = #{collegeId}
+    </update>
+
+    <delete id="delTeacher" >
+        delete from teacher where teacher_id = #{teacherId}
+    </delete>
+
+    <select id="selectAllTeacher" resultType="teacher">
+        select <include refid="BaseCol"></include>
+            from teacher
+    </select>
+
+    <select id="selectTacherByName" resultType="teacher">
+        select <include refid="BaseCol"></include>
+            from teacher where teacher_name like concat('%',#{teacherName},'%')
+    </select>
+
+    <select id="selectTeacherById" resultType="teacher">
+        select <include refid="BaseCol"></include>
+            from teacher where teacher_id = #{teacherId}
+    </select>
+</mapper>
