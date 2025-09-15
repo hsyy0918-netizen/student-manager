@@ -1,0 +1,52 @@
+body { background:#f5f7fb; }
+.bg-white { background:#fff; }
+.page-wrap{ padding:16px; }
+.page-header{ margin-bottom:12px; }
+.page-header h2{ margin:0; font-size:20px; font-weight:600; color:#333; }
+.page-header .sub{ color:#888; margin-top:4px; }
+
+.search-bar{ border:1px solid #e6e6e6; border-radius:8px; padding:10px 10px 0; background:#fff; margin-bottom:12px; }
+.search-row{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:10px; }
+.search-row .label{ min-width:72px; text-align:right; color:#666; }
+.w200{ width:200px; } .w160{ width:160px; } .w260{ width:260px; }
+.btns-right{ display:flex; gap:10px; margin-left:auto; }
+
+.toolbar{ display:flex; align-items:center; justify-content:space-between; margin:8px 0; }
+.tips{ color:#999; }
+
+.form-card{ background:#fff; border:1px solid #eee; border-radius:8px; padding:16px; }
+.form-actions{ padding-top:8px; }
+
+.sum-amt{ color:#e67e22; font-weight:700; }
+
+.flex{ display:flex; gap:6px; align-items:center; }
+.flex-1{ flex:1; }
+
+.nav-grid{ display:grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap:12px; margin-top:12px; }
+.nav-card{ display:block; background:#fff; border:1px solid #eee; border-radius:10px; padding:16px; text-decoration:none; color:#333; transition:box-shadow .2s; }
+.nav-card:hover{ box-shadow:0 6px 20px rgba(0,0,0,.06); }
+.nav-card .layui-icon{ font-size:28px; color:#1890ff; }
+.nav-card .title{ font-size:16px; font-weight:600; margin-top:6px; }
+.nav-card .desc{ color:#888; margin-top:4px; }
+
+.op-btns .layui-btn + .layui-btn{ margin-left:6px; }
+:root{
+    --brand:#17c0e9;         /* 按截图的蓝青色按钮 */
+    --brand-deep:#14a8cc;    /* hover/active */
+    --thead-bg:#12a9d0;      /* 表头深蓝青 */
+    --thead-fg:#fff;
+    --search-bg:#f6fbff;     /* 查询区很浅的蓝底 */
+    --line:#e8f1f6;
+}
+.layui-btn{ background-color:var(--brand); border-color:var(--brand); }
+.layui-btn:hover{ background-color:var(--brand-deep); border-color:var(--brand-deep); }
+.search-bar{ background:var(--search-bg); border-color:var(--line); }
+.page-header{ display:flex; align-items:center; justify-content:space-between; }
+.page-header .right-actions .layui-btn + .layui-btn{ margin-left:8px; }
+
+/* 表头蓝底白字、行分割线更浅 */
+.layui-table th{ background:var(--thead-bg)!important; color:var(--thead-fg)!important; }
+.layui-table td, .layui-table th{ border-color:var(--line)!important; }
+
+/* 表格底部分页条风格靠近截图 */
+.layui-table-view .layui-table-page{ border-top:1px solid var(--line); }

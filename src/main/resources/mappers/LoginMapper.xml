@@ -11,7 +11,7 @@
     </insert>
 
     <select id="selectByUserName" resultType="com.jxd.stuManger.model.UserLogin">
-        select user_id,username,password,role from userlogin where username = #{useName}
+        select user_id,username,password,role from userlogin where username = #{userName}
     </select>
 
     <delete id="deleteUserLoginByUsername">

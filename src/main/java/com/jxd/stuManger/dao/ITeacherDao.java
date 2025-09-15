@@ -9,7 +9,7 @@ public interface ITeacherDao {
     boolean updateTeacher(Teacher teacher);
     boolean delTeacher(int teacherId);
     List<Teacher> selectAllTeacher();
-    List<Teacher> selectTacherByName(String teacherName);//?这是那个功能啊
+    List<Teacher> selectTeacherByName(String teacherName);//?这是那个功能啊
 
     //其他
     Teacher selectTeacherById(int teacherId);

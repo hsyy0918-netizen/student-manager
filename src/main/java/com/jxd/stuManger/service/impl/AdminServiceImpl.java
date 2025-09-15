@@ -154,7 +154,7 @@ public class AdminServiceImpl implements IAdminService {
     public List<Teacher> searchTeachersByName(String name) {
         SqlSession session = getSession();
         teacherDao = session.getMapper(ITeacherDao.class);
-        return teacherDao.selectTacherByName(name);
+        return teacherDao.selectTeacherByName(name);
     }
 
     // 课程管理方法

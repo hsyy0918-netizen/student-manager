@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8"/>
+    <title>项目选择</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/layui@2.8.18/dist/css/layui.css"/>
+    <link rel="stylesheet" href="./css/style.css"/>
+</head>
+<body>
+<div class="page-wrap">
+    <!-- 顶部查询：项目名称 + 阿米巴名称 + 查询/确认/清空 -->
+    <div class="search-bar">
+        <form class="layui-form" lay-filter="projSearch">
+            <div class="search-row">
+                <div class="w200"><input type="text" name="name" class="layui-input" placeholder="项目名称"></div>
+                <div class="w200"><input type="text" name="amiba" class="layui-input" placeholder="阿米巴名称"></div>
+                <div class="btns-right">
+                    <button class="layui-btn" lay-submit lay-filter="doSearch">查询</button>
+                    <button type="button" class="layui-btn" id="btnConfirm">确认</button>
+                    <button type="button" class="layui-btn layui-btn-primary" id="btnClear">清空</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- 表格 -->
+    <table id="tableProject" lay-filter="tableProject"></table>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/layui@2.8.18/dist/layui.js"></script>
+<script src="./js/mock-data.js"></script>
+<script>
+    layui.use(['table','form','layer','jquery'], function(){
+        const table = layui.table, form = layui.form, layer = layui.layer, $ = layui.$;
+
+        let current = null;
+
+        function render(data){
+            table.render({
+                elem:'#tableProject',
+                height:'full-180',
+                data,
+                even:true,
+                page:true,
+                limits:[10,20,50],
+                limit:10,
+                cols:[[
+                    {type:'numbers', title:'序号', width:60},
+                    {field:'projectName', title:'项目名称', minWidth:200},
+                    {field:'deptName', title:'阿米巴/部门', width:150},
+                    {field:'partner', title:'合作单位', width:160},
+                    {field:'estOutput', title:'预估产值', width:120, templet:d=>'¥'+d.estOutput.toFixed(2)},
+                    {field:'estOutbuy', title:'预估外购', width:120, templet:d=>'¥'+d.estOutbuy.toFixed(2)}
+                ]],
+                done: function(res){
+                    const view = $('#tableProject').next('.layui-table-view');
+                    // 单击选中/高亮
+                    view.find('tbody tr').off('click').on('click', function(){
+                        const idx = $(this).data('index');
+                        current = res.data[idx];
+                        $(this).addClass('layui-table-click').siblings().removeClass('layui-table-click');
+                    });
+                    // 双击直接确认
+                    view.find('tbody tr').off('dblclick').on('dblclick', function(){
+                        const idx = $(this).data('index');
+                        current = res.data[idx];
+                        if (current && parent && parent.handleProjectSelected){
+                            parent.handleProjectSelected(current);
+                        }
+                    });
+                }
+            });
+        }
+
+        // 初始渲染
+        render(MOCK_PROJECTS);
+
+        // 查询
+        form.on('submit(doSearch)', function(data){
+            const {name='', amiba=''} = data.field;
+            const res = MOCK_PROJECTS.filter(p =>
+                (!name || p.projectName.includes(name)) &&
+                (!amiba || p.deptName.includes(amiba))
+            );
+            render(res);
+            return false;
+        });
+
+        // 确认
+        document.getElementById('btnConfirm').onclick = function(){
+            if(!current){ layer.msg('请先选择一行'); return; }
+            if(parent && parent.handleProjectSelected){
+                parent.handleProjectSelected(current);
+            }
+        };
+
+        // 清空（关闭弹窗）
+        document.getElementById('btnClear').onclick = function(){
+            current = null;
+            if(parent && parent.layer){ parent.layer.closeAll('iframe'); }
+        };
+    });
+</script>
+</body>
+</html>

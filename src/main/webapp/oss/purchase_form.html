@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8"/>
+    <title>采购申请 · 新增/编辑</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/layui@2.8.18/dist/css/layui.css"/>
+    <link rel="stylesheet" href="./css/style.css"/>
+    <style>
+        .grid-table{width:100%; border:1px solid #e6e6e6; border-collapse:collapse; background:#fff;}
+        .grid-table th,.grid-table td{border:1px solid #e6e6e6; padding:8px;}
+        .grid-table th{width:160px; background:#f7fbff; color:#333; font-weight:600;}
+        .section-title{margin:16px 0 8px; font-weight:700; color:#129bc7; display:flex; align-items:center; gap:6px;}
+        .section-title::before{content:""; width:6px; height:14px; background:#129bc7; border-radius:2px;}
+        .right-btns .layui-btn + .layui-btn{margin-left:8px;}
+    </style>
+</head>
+<body>
+<div class="page-wrap">
+    <div class="page-header">
+        <h2>项目采购申请</h2>
+        <div class="right-btns">
+            <button class="layui-btn" form="formMain" lay-submit lay-filter="saveDraft">保存</button>
+            <button class="layui-btn layui-btn-normal" form="formMain" lay-submit lay-filter="submitApply">提交</button>
+            <a class="layui-btn layui-btn-primary" href="./purchase_list.html">返回列表</a>
+        </div>
+    </div>
+
+    <!-- 采购基本信息 -->
+    <div class="section-title">采购基本信息</div>
+    <form class="layui-form" lay-filter="formMain" id="formMain">
+        <table class="grid-table">
+            <tr>
+                <th>采购申请编号</th>
+                <td><input type="text" name="applyNo" readonly placeholder="保存后生成" class="layui-input"></td>
+                <th>申请时间</th>
+                <td><input type="text" name="applyTime" id="applyTime" placeholder="YYYY-MM-DD HH:mm:ss" class="layui-input"></td>
+            </tr>
+            <tr>
+                <th>申请人</th>
+                <td><input type="text" name="applicant" placeholder="张三" class="layui-input"></td>
+                <th>所属部门</th>
+                <td>
+                    <select name="deptId" lay-search id="deptSelect"></select>
+                </td>
+            </tr>
+            <tr>
+                <th>* 项目名称</th>
+                <td>
+                    <div class="layui-input-inline" style="width:260px">
+                        <input type="text" name="projectName" id="projectName" readonly placeholder="请选择项目" class="layui-input">
+                    </div>
+                    <button type="button" class="layui-btn layui-btn-sm" id="btnPickProject"><i class="layui-icon layui-icon-search"></i> 选择</button>
+                </td>
+                <th>预算产值</th>
+                <td><input type="text" name="estOutput" id="estOutput" readonly class="layui-input"></td>
+            </tr>
+            <tr>
+                <th>项目预估外购成本</th>
+                <td><input type="text" name="estOutbuy" id="estOutbuy" readonly class="layui-input"></td>
+                <th>* 采购理由</th>
+                <td>
+                    <textarea name="reason" placeholder="必填：请简要说明采购事由" class="layui-textarea" style="height:72px"></textarea>
+                </td>
+            </tr>
+        </table>
+
+        <!-- 本次采购信息 -->
+        <div class="section-title">本次采购信息</div>
+        <div class="toolbar">
+            <button type="button" class="layui-btn layui-btn-primary" id="btnAddRow"><i class="layui-icon layui-icon-add-1"></i> 新增</button>
+            <button type="button" class="layui-btn layui-btn-danger" id="btnRemoveSel"><i class="layui-icon layui-icon-delete"></i> 删除</button>
+            <div class="tips">合计：<span id="sumAmount" class="sum-amt">¥0.00</span></div>
+        </div>
+        <table class="layui-table" lay-size="sm">
+            <thead>
+            <tr>
+                <th style="width:50px">序号</th>
+                <th style="width:120px">类别</th>
+                <th style="min-width:160px">产品名称</th>
+                <th style="min-width:200px">供应商信息</th>
+                <th style="width:110px">单一来源</th>
+                <th style="width:140px">规格型号</th>
+                <th style="width:140px">产品配置</th>
+                <th style="width:110px">数量</th>
+                <th style="width:100px">单位</th>
+                <th style="width:140px">单价(元)</th>
+            </tr>
+            </thead>
+            <tbody id="detailTbody"></tbody>
+        </table>
+
+        <!-- 单一来源附件信息 -->
+        <div class="section-title">单一来源附件信息</div>
+        <div class="form-card" style="padding:12px">
+            <button type="button" class="layui-btn layui-btn-primary" id="btnAddAttach"><i class="layui-icon layui-icon-upload"></i> 单一来源附件（原型）</button>
+            <div id="attachList" style="margin-top:8px;color:#888;">尚未添加附件（原型占位）</div>
+        </div>
+
+        <!-- 历史采购信息 -->
+        <div class="section-title">历史采购信息</div>
+        <table id="tableHistory" lay-filter="tableHistory"></table>
+
+        <div class="form-actions" style="margin-top:12px">
+            <button class="layui-btn" lay-submit lay-filter="saveDraft"><i class="layui-icon layui-icon-release"></i> 保存</button>
+            <button class="layui-btn layui-btn-normal" lay-submit lay-filter="submitApply"><i class="layui-icon layui-icon-upload-drag"></i> 提交</button>
+            <a class="layui-btn layui-btn-primary" href="./purchase_list.html">返回列表</a>
+        </div>
+    </form>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/layui@2.8.18/dist/layui.js"></script>
+<script src="./js/mock-data.js"></script>
+<script src="./js/common.js"></script>
+<script>
+    layui.use(['form','laydate','table','layer','jquery'], function(){
+        const form = layui.form, laydate = layui.laydate, table=layui.table, layer=layui.layer, $=layui.$;
+
+        // 子窗口回调
+        window.handleProjectSelected = function(row){
+            $('#projectName').val(row.projectName);
+            $('#estOutput').val(common.fmtCurrency(row.estOutput));
+            $('#estOutbuy').val(common.fmtCurrency(row.estOutbuy));
+            table.reload('tableHistory', {data: common.findHistoryByProject(row.projectId)});
+            layer.closeAll('iframe');
+        };
+        window.handleSupplierSelected = function(row, trId){
+            const tr = document.getElementById(trId);
+            tr.querySelector('input[name="supplierName"]').value = row.supplierName + '（'+row.linkman+' / '+row.phone+'）';
+            layer.closeAll('iframe');
+        };
+
+        // 初始化
+        common.fillDeptSelect(document.getElementById('deptSelect'));
+        laydate.render({elem:'#applyTime', type:'datetime', value:new Date()});
+
+        table.render({
+            elem:'#tableHistory',
+            height: 220,
+            data: [],
+            cols:[[
+                {type:'numbers', title:'序号', width:60},
+                {field:'applyNo', title:'申请单编号', width:180},
+                {field:'projectName', title:'项目名称', minWidth:180},
+                {field:'applicant', title:'申请人', width:100},
+                {field:'sumAmount', title:'预算金额', width:120, templet:d=>common.fmtCurrency(d.sumAmount)},
+                {field:'sumAmount', title:'建议采购金额', width:140, templet:d=>common.fmtCurrency(d.sumAmount)},
+                {field:'statusText', title:'当前节点', width:120}
+            ]]
+        });
+
+        // 明细行
+        const tbody = document.getElementById('detailTbody');
+        function addRow(){
+            const rowId = 'row_' + Date.now();
+            const html = `
+      <tr id="${rowId}">
+        <td class="seq"></td>
+        <td>
+          <select class="layui-input" name="category" onchange="common.detailChanged('${rowId}')">
+            <option value="">请选择</option>
+            <option value="software">软件</option>
+            <option value="hardware">硬件</option>
+            <option value="service">服务类</option>
+          </select>
+        </td>
+        <td><input type="text" class="layui-input" name="productName" placeholder="产品名称" oninput="common.detailChanged('${rowId}')"></td>
+        <td>
+          <div class="flex">
+            <input type="text" class="layui-input flex-1" name="supplierName" placeholder="请选择供应商" readonly>
+            <button type="button" class="layui-btn layui-btn-sm" onclick="common.openSupplier('${rowId}')">选择</button>
+          </div>
+        </td>
+        <td>
+          <select class="layui-input" name="singleSource" onchange="common.detailChanged('${rowId}')">
+            <option value="否">否</option>
+            <option value="是">是</option>
+          </select>
+        </td>
+        <td><input type="text" class="layui-input" name="spec" placeholder="规格型号"></td>
+        <td><input type="text" class="layui-input" name="config" placeholder="产品配置"></td>
+        <td><input type="number" min="0" step="1" class="layui-input" name="qty" value="1" oninput="common.detailChanged('${rowId}')"></td>
+        <td><input type="text" class="layui-input" name="unit" value="件"></td>
+        <td><input type="number" min="0" step="0.01" class="layui-input" name="price" value="0.00" oninput="common.detailChanged('${rowId}')"></td>
+      </tr>`;
+            tbody.insertAdjacentHTML('beforeend', html);
+            renumber();
+        }
+        function renumber(){
+            [...tbody.querySelectorAll('tr')].forEach((tr, i)=> tr.querySelector('.seq').textContent = i+1);
+        }
+        document.getElementById('btnAddRow').onclick = addRow;
+        document.getElementById('btnRemoveSel').onclick = function(){
+            // 原型：删除最后一行
+            const rows = tbody.querySelectorAll('tr');
+            if(rows.length){ rows[rows.length-1].remove(); common.recalcSum(); renumber(); }
+        };
+        addRow(); // 默认 1 行
+
+        // 选择项目
+        document.getElementById('btnPickProject').onclick = () => {
+            layer.open({ type:2, title:'选择项目', area:['880px','560px'], content:'./project_select.html' });
+        };
+
+        // 附件占位
+        document.getElementById('btnAddAttach').onclick = ()=>{
+            const div = document.getElementById('attachList');
+            div.textContent = '已添加 1 个附件（示例：single-source.pdf，原型不实际上传）';
+        };
+
+        // 提交/保存
+        form.on('submit(saveDraft)', function(){
+            if(!common.validateBudget()) return false;
+            layer.msg('已保存（原型，无实际落库）'); return false;
+        });
+        form.on('submit(submitApply)', function(){
+            if(!common.validateBudget()) return false;
+            layer.msg('已提交，进入部门审核。（原型）'); return false;
+        });
+    });
+</script>
+</body>
+</html>

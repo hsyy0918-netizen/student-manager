@@ -6,9 +6,10 @@
         course_id, course_name, teacher_id, course_time, classroom, class_week, course_type, college_id, score
     </sql>
 
+<!-- -->
     <insert id="insertCourse" parameterType="course">
         insert into course (course_id, course_name, teacher_id, course_time, classroom, class_week, course_type, college_id, score)
-        values (#{courseId},#{courseName},#{teacherId},#{courseTime},#{classroom},#{classroom},#{courseType},#{collegeId},#{score})
+        values (#{courseId},#{courseName},#{teacherId},#{courseTime},#{classroom},#{classWeek},#{courseType},#{collegeId},#{score})
     </insert>
 
     <update id="updateCourse" parameterType="course">
@@ -43,8 +44,7 @@
     </select>
 
     <select id="isCourseSelected" resultType="java.lang.Boolean">
-        select <include refid="BaseCol"></include>
-        from course where course_id = #{courseId}
+        select exists(select 1 from course where course_id = #{courseId})
     </select>
 
 </mapper>

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"/>
+  <title>采购管理原型 · 框架</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/layui@2.8.18/dist/css/layui.css"/>
+  <link rel="stylesheet" href="./css/style.css"/>
+  <style>
+    :root{
+      --sidebar-w: 220px;
+      --sidebar-w-mini: 64px;
+      --topbar-h: 56px;
+      --bg:#f5f7fb;
+      --border:#e6eef5;
+      --brand1:#2f7de5;   /* 渐变上 */
+      --brand2:#39c1ff;   /* 渐变下 */
+      --primary:#17c0e9;  /* 主要按钮蓝青 */
+    }
+    html,body{height:100%;}
+    body{background:var(--bg);}
+    .app{
+      height:100%;
+      display:grid;
+      grid-template-columns: var(--sidebar-w) 1fr;
+      grid-template-rows: var(--topbar-h) 1fr;
+    }
+    /* 侧栏 */
+    .sidebar{
+      grid-row: 1 / span 2;
+      color:#fff;
+      background: linear-gradient(180deg, var(--brand1), var(--brand2));
+      position:relative;
+      display:flex; flex-direction:column;
+    }
+    .brand{
+      height: var(--topbar-h);
+      display:flex; align-items:center; gap:10px;
+      padding:0 14px;
+      border-bottom: 1px solid rgba(255,255,255,.15);
+      font-weight:600;
+    }
+    .brand .logo{
+      width:32px;height:32px;border-radius:8px;background:rgba(255,255,255,.15);
+      display:flex;align-items:center;justify-content:center;
+    }
+    .brand .logo i{font-size:20px;color:#fff;}
+    .menu{padding:10px 8px; overflow:auto;}
+    .menu a{
+      display:flex; align-items:center; gap:10px;
+      color:#eaf6ff; text-decoration:none;
+      padding:10px 12px; border-radius:8px;
+    }
+    .menu a:hover{background:rgba(255,255,255,.08);}
+    .menu a.active{background:#fff;color:#1677ff;}
+    .menu i.layui-icon{font-size:18px; width:20px; text-align:center;}
+    .sidebar.collapsed .text{display:none;}
+    .sidebar.collapsed{width:var(--sidebar-w-mini);}
+    .sidebar.collapsed + .topbar{grid-column:2;}
+    .sidebar.collapsed ~ .content{grid-column:2;}
+
+    /* 顶部栏 */
+    .topbar{
+      grid-column:2;
+      background:#fff; border-bottom:1px solid var(--border);
+      display:flex; align-items:center; justify-content:space-between;
+      padding:0 12px 0 8px;
+    }
+    .top-left{display:flex; align-items:center; gap:10px;}
+    #btnCollapse{border:none;background:transparent;cursor:pointer;padding:6px 8px;}
+    #btnCollapse i{font-size:20px;color:#666;}
+    .crumb{color:#666;}
+    .top-center{color:#666;}
+    .top-right{display:flex; align-items:center; gap:12px;}
+    .top-right i{font-size:18px;color:#666;cursor:pointer;}
+    .avatar{width:28px;height:28px;border-radius:50%; background:#e8f1ff; display:inline-flex;align-items:center;justify-content:center;color:#1677ff;}
+
+    /* 内容区 */
+    .content{grid-column:2; padding:12px;}
+    .card{
+      background:#fff; border:1px solid var(--border); border-radius:10px;
+      height: calc(100vh - var(--topbar-h) - 24px); /* 24 = 上下padding */
+      overflow:hidden;
+      display:flex; flex-direction:column;
+    }
+    .card-header{
+      padding:10px 12px; border-bottom:1px solid var(--border);
+      display:flex; align-items:center; justify-content:space-between;
+    }
+    .card-body{flex:1;}
+    .card-body iframe{width:100%; height:100%; border:0;}
+    .layui-btn{background-color:var(--primary); border-color:var(--primary);}
+  </style>
+</head>
+<body>
+<div class="app">
+  <!-- 左侧侧栏 -->
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="logo"><i class="layui-icon layui-icon-set"></i></div>
+      <div class="text">员工工作系统</div>
+    </div>
+    <nav class="menu" id="menu">
+      <a href="#/purchase/list" data-page="purchase_list.html" class="active">
+        <i class="layui-icon layui-icon-home"></i><span class="text">采购申请列表</span>
+      </a>
+      <a href="#/purchase/new" data-page="purchase_form.html">
+        <i class="layui-icon layui-icon-form"></i><span class="text">采购申请</span>
+      </a>
+      <a href="#/audit" data-page="audit_list.html">
+        <i class="layui-icon layui-icon-vercode"></i><span class="text">待办审核</span>
+      </a>
+      <!-- 可按需继续扩展菜单；未实现的入口可先指向列表页 -->
+    </nav>
+  </aside>
+
+  <!-- 顶部栏 -->
+  <header class="topbar" id="topbar">
+    <div class="top-left">
+      <button id="btnCollapse" title="折叠/展开侧栏"><i class="layui-icon layui-icon-shrink-right"></i></button>
+      <div class="crumb"><span id="crumb">采购申请列表</span></div>
+    </div>
+    <div class="top-center" id="today">—</div>
+    <div class="top-right">
+      <i class="layui-icon layui-icon-notice" title="通知"></i>
+      <i class="layui-icon layui-icon-survey" title="消息"></i>
+      <i class="layui-icon layui-icon-set" title="设置"></i>
+      <span class="avatar">张</span><span style="color:#333">张三</span>
+    </div>
+  </header>
+
+  <!-- 内容区 -->
+  <main class="content">
+    <div class="card">
+      <div class="card-header">
+        <div id="pageTitle">采购申请列表</div>
+        <div class="actions">
+          <!-- 这里可按页面需要放置按钮（原型），默认留空 -->
+        </div>
+      </div>
+      <div class="card-body">
+        <iframe id="appFrame" src="./purchase_list.html"></iframe>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/layui@2.8.18/dist/layui.js"></script>
+<script>
+  layui.use(['layer','util','jquery'], function(){
+    const $ = layui.$, layer = layui.layer;
+
+    // 简易路由映射
+    const routes = {
+      '#/purchase/list': { title:'采购申请列表', page:'./purchase_list.html' },
+      '#/purchase/new':  { title:'采购申请',     page:'./purchase_form.html' },
+      '#/audit':         { title:'待办审核',     page:'./audit_list.html' }
+    };
+
+    const $sidebar = $('#sidebar');
+    const $frame = $('#appFrame');
+    const $crumb = $('#crumb');
+    const $title = $('#pageTitle');
+
+    // 菜单点击
+    $('#menu a').on('click', function(e){
+      $('#menu a').removeClass('active'); $(this).addClass('active');
+      const page = this.dataset.page || './purchase_list.html';
+      const text = $(this).text().trim();
+      $frame.attr('src', page);
+      $crumb.text(text); $title.text(text);
+    });
+
+    // hash 路由（支持地址栏切换）
+    function applyRoute(){
+      const r = routes[location.hash] || routes['#/purchase/list'];
+      // 同步菜单高亮
+      $('#menu a').removeClass('active')
+              .filter((i,a)=> (a.getAttribute('href')===location.hash)).addClass('active');
+      $frame.attr('src', r.page);
+      $crumb.text(r.title); $title.text(r.title);
+    }
+    window.addEventListener('hashchange', applyRoute);
+    applyRoute();
+
+    // 顶部日期（示例：2025-09-15 星期一）
+    const weekMap = ['日','一','二','三','四','五','六'];
+    const d = new Date();
+    const pad = n=> (n<10?('0'+n):n);
+    $('#today').text(`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} 星期${weekMap[d.getDay()]}`);
+
+    // 折叠侧栏
+    let collapsed = false;
+    $('#btnCollapse').on('click', function(){
+      collapsed = !collapsed;
+      $sidebar.toggleClass('collapsed', collapsed);
+      this.innerHTML = `<i class="layui-icon ${collapsed?'layui-icon-spread-left':'layui-icon-shrink-right'}"></i>`;
+      document.documentElement.style.setProperty('--sidebar-w', collapsed?'var(--sidebar-w-mini)':'220px');
+    });
+  });
+</script>
+</body>
+</html>

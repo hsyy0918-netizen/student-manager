@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8"/>
+    <title>采购申请列表</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/layui@2.8.18/dist/css/layui.css"/>
+    <link rel="stylesheet" href="./css/style.css"/>
+</head>
+<body>
+<div class="page-wrap">
+    <div class="page-header">
+        <div>
+            <h2>采购申请列表</h2>
+            <div class="sub">按申请单编号/项目名称/申请人快速查询；展开更多条件</div>
+        </div>
+        <div class="right-actions">
+            <a class="layui-btn" href="./purchase_form.html">新增</a>
+            <button class="layui-btn layui-btn-danger" id="btnBatchDelete">删除</button>
+            <a class="layui-btn layui-btn-primary" href="javascript:layer.msg('流程图（原型）');">流程图</a>
+        </div>
+    </div>
+
+    <!-- 基础查询 -->
+    <div class="search-bar">
+        <form class="layui-form" lay-filter="searchForm" id="searchForm">
+            <div class="search-row">
+                <div class="w200"><input type="text" name="applyNo" placeholder="申请单编号" class="layui-input"></div>
+                <div class="w200"><input type="text" name="projectName" placeholder="项目名称" class="layui-input"></div>
+                <div class="w200"><input type="text" name="applicant" placeholder="申请人" class="layui-input"></div>
+                <div class="btns-right">
+                    <button class="layui-btn" lay-submit lay-filter="doSearch">查询</button>
+                    <a class="more-toggle" id="moreToggle">更多查询 ▾</a>
+                </div>
+            </div>
+
+            <!-- 更多查询（默认收起，截图里的第二行） -->
+            <div class="more-box" id="moreBox">
+                <div class="search-row">
+                    <div class="label">申请时间</div>
+                    <div class="w200"><input type="text" name="dateFrom" id="dateFrom" placeholder="开始日期" class="layui-input"></div>
+                    <div class="label">至</div>
+                    <div class="w200"><input type="text" name="dateTo" id="dateTo" placeholder="结束日期" class="layui-input"></div>
+
+                    <div class="w160">
+                        <select name="status" id="status">
+                            <option value="">当前节点</option>
+                            <option value="draft">草稿</option>
+                            <option value="submitted">已提交</option>
+                            <option value="dept_approving">部门审核中</option>
+                            <option value="company_approving">公司审核中</option>
+                            <option value="rejected">已驳回</option>
+                            <option value="approved">已通过</option>
+                        </select>
+                    </div>
+
+                    <div class="w160">
+                        <select name="deptId" id="deptId">
+                            <option value="">所属部门</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <table id="tablePurchase" lay-filter="tablePurchase"></table>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/layui@2.8.18/dist/layui.js"></script>
+<script src="./js/mock-data.js"></script>
+<script src="./js/common.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/layui@2.8.18/dist/layui.js"></script>
+<script src="./js/mock-data.js"></script>
+<script src="./js/common.js"></script>
+<script>
+    layui.use(['table','laydate','form','layer','jquery'], function(){
+        initPurchaseListUI();
+        const form = layui.form, table = layui.table;
+
+        form.on('submit(doSearch)', function(data){
+            const f = data.field;
+            const filtered = common.filterPurchases(MOCK_PURCHASES, f);
+            table.reload('tablePurchase', {data: filtered, page:{curr:1}});
+            return false;
+        });
+
+        document.getElementById('btnBatchDelete').onclick = () => {
+            const sel = layui.table.checkStatus('tablePurchase').data;
+            layui.layer.msg(sel.length ? `删除 ${sel.length} 条（原型）` : '请先勾选');
+        };
+    });
+</script>
+</body>
+</html>

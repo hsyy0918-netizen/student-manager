@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8"/>
+    <title>供应商选择</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/layui@2.8.18/dist/css/layui.css"/>
+    <link rel="stylesheet" href="./css/style.css"/>
+</head>
+<body>
+<div class="page-wrap">
+    <!-- 顶部查询：供应商名称 + 查询/确认/清空 -->
+    <div class="search-bar">
+        <form class="layui-form" lay-filter="supSearch" id="supSearch">
+            <div class="search-row">
+                <div class="w260"><input type="text" name="kw" class="layui-input" placeholder="供应商名称"></div>
+                <div class="btns-right">
+                    <button class="layui-btn" lay-submit lay-filter="doSearch">查询</button>
+                    <button type="button" class="layui-btn" id="btnOk">确认</button>
+                    <button type="button" class="layui-btn layui-btn-primary" id="btnClear">清空</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- 表格 -->
+    <table id="tableSupplier" lay-filter="tableSupplier"></table>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/layui@2.8.18/dist/layui.js"></script>
+<script src="./js/mock-data.js"></script>
+<script>
+    layui.use(['table','form','layer','jquery'], function(){
+        const table = layui.table, form = layui.form, layer = layui.layer, $ = layui.$;
+
+        // 回填目标行 ID（从 URL 取）
+        const trId = new URLSearchParams(location.search).get('trId') || '';
+
+        let chosen = null;
+
+        function render(data){
+            table.render({
+                elem:'#tableSupplier',
+                height:'full-180',
+                data,
+                even:true,
+                page:true,
+                limits:[10,20,50],
+                limit:10,
+                cols:[[
+                    {type:'numbers', title:'序号', width:60},
+                    {field:'supplierName', title:'供应商名称', minWidth:200},
+                    {field:'linkman', title:'联系人', width:100},
+                    {field:'phone', title:'联系方式', width:140},
+                    {field:'address', title:'供应商地址', minWidth:220}
+                ]],
+                done: function(res){
+                    const view = $('#tableSupplier').next('.layui-table-view');
+                    // 单击选中/高亮
+                    view.find('tbody tr').off('click').on('click', function(){
+                        const idx = $(this).data('index');
+                        chosen = res.data[idx];
+                        $(this).addClass('layui-table-click').siblings().removeClass('layui-table-click');
+                    });
+                    // 双击直接确认
+                    view.find('tbody tr').off('dblclick').on('dblclick', function(){
+                        const idx = $(this).data('index');
+                        chosen = res.data[idx];
+                        if (chosen && parent && parent.handleSupplierSelected){
+                            parent.handleSupplierSelected(chosen, trId);
+                        }
+                    });
+                }
+            });
+        }
+
+        // 初始渲染（去掉类别列，列名与截图一致）
+        render(MOCK_SUPPLIERS);
+
+        // 查询
+        form.on('submit(doSearch)', function(d){
+            const kw = (d.field.kw||'').trim();
+            const res = MOCK_SUPPLIERS.filter(s => !kw || s.supplierName.includes(kw));
+            render(res);
+            return false;
+        });
+
+        // 确认
+        document.getElementById('btnOk').onclick = function(){
+            if(!chosen){ layer.msg('请先选择一行'); return; }
+            if(parent && parent.handleSupplierSelected){
+                parent.handleSupplierSelected(chosen, trId);
+            }
+        };
+
+        // 清空（关闭弹窗）
+        document.getElementById('btnClear').onclick = function(){
+            chosen = null;
+            if(parent && parent.layer){ parent.layer.closeAll('iframe'); }
+        };
+    });
+</script>
+</body>
+</html>

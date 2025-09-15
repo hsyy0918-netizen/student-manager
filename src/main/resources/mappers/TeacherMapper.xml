@@ -26,7 +26,7 @@
             from teacher
     </select>
 
-    <select id="selectTacherByName" resultType="teacher">
+    <select id="selectTeacherByName" resultType="teacher">
         select <include refid="BaseCol"></include>
             from teacher where teacher_name like concat('%',#{teacherName},'%')
     </select>
